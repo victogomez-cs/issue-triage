@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "issue-triage"
+version = "0.1.0"
+description = "Rank a GitHub repository's open issues: kind, severity, duplicates, and what to fix first."
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.11"
+keywords = ["github", "issues", "triage", "bugs", "claude", "llm"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Environment :: Console",
+    "Topic :: Software Development :: Bug Tracking",
+]
+dependencies = [
+    "requests>=2.28",
+    "openpyxl>=3.1",
+    "numpy>=1.24",
+    "scipy>=1.10",
+    "scikit-learn>=1.2",
+]
+
+[project.optional-dependencies]
+ai = ["anthropic>=0.40"]
+embeddings = ["sentence-transformers>=2.7"]
+dev = ["pytest>=7", "anthropic>=0.40"]
+
+[project.scripts]
+issue-triage = "issue_triage.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+issue_triage = ["profiles/*.toml"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

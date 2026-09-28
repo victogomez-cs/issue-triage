@@ -1,0 +1,78 @@
+# Label profile for flutter/flutter, following its documented triage process
+# (docs/triage/README.md and docs/contributing/issue_hygiene/README.md in that repo).
+
+name = "flutter"
+description = "flutter/flutter: P0-P3, team-* / triaged-*, c: categories, found in release: X.Y"
+
+# Flutter convention: an issue without a c: category label is usually a plain bug report.
+uncategorized_is_bug = true
+require_priority = true
+case_sensitive = true
+
+[issue_types]
+Bug = "bug"
+Feature = "feature"
+Task = "internal"
+
+[[kind_rules]]
+kind = "bug"
+labels = ['c: fatal crash', 'c: crash', 'c: regression']
+
+[[kind_rules]]
+kind = "feature"
+labels = ['c: new feature', 'c: proposal', 'c: new widget']
+
+[[kind_rules]]
+kind = "internal"
+labels = ['c: tech-debt', 'c: flake', 'c: contributor-productivity', 'team: flakes']
+
+[[kind_rules]]
+kind = "docs"
+labels = ['d: .+']
+
+[[kind_rules]]
+kind = "bug"
+labels = ['c: performance', 'c: rendering']
+
+[priority]
+P0 = ['P0']
+P1 = ['P1']
+P2 = ['P2']
+P3 = ['P3']
+
+[[severity_rules]]
+level = "critical"
+labels = ['c: fatal crash']
+
+[[severity_rules]]
+level = "critical"
+all_of = ['c: crash', 'c: regression']
+
+[[severity_rules]]
+level = "high"
+labels = ['c: crash', 'c: regression']
+
+[[severity_rules]]
+level = "medium"
+labels = ['c: performance', 'c: rendering']
+
+[signals]
+crash = ['c: crash', 'c: fatal crash']
+regression = ['c: regression']
+production = ['a: production']
+named_customer = ['customer: (?!crowd$).+']
+crowd_customer = ['customer: crowd']
+reproducible = ['has reproducible steps']
+needs_info = ['needs repro info']
+waiting = ['waiting for response']
+needs_triage = []
+
+[triage]
+team = 'team-(.+)'
+triaged = 'triaged-{team}'
+
+[release]
+pattern = 'found in release: (\d+)\.(\d+)'
+
+[dedupe]
+skip_kinds = ["internal"]

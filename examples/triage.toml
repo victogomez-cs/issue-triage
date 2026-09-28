@@ -1,0 +1,46 @@
+# Example config: adapt the label rules to your repository.
+# Use it with:  issue-triage owner/repo --config triage.toml
+#
+# Tip: run the tool once, then open the "Labels" sheet of the report (or run
+# `issue-triage labels owner/repo`) to see which labels aren't recognized yet.
+
+# Start from a built-in profile: "generic" (default for most repos) or "flutter".
+profile = "generic"
+
+# One sentence of context helps the AI judge severity.
+project_context = "A cross-platform mobile SDK used by app developers."
+
+# Treat issues with no kind label as bugs?
+# uncategorized_is_bug = false
+
+# Your kind rules are checked BEFORE the profile's own rules.
+# (Set replace_rules = true to use only yours.) Patterns are regexes matched against the whole label.
+[[kind_rules]]
+kind = "bug"
+labels = ['type: defect', 'status: broken']
+
+[[kind_rules]]
+kind = "feature"
+labels = ['type: feature-request']
+
+# Priority labels (replaces the profile's list for each level you set).
+[priority]
+P0 = ['sev-0', 'P0']
+P1 = ['sev-1', 'P1']
+
+[signals]
+reproducible = ['repro: confirmed']
+
+[triage]
+# The area/team label pattern; the first group is the team name.
+team = 'area/(.+)'
+
+# Scoring weights (all optional; see the Scoring sheet for the defaults).
+[weights.priority]
+P0 = 50
+
+[weights.signals]
+reproducible = 10
+
+[weights.urgency_thresholds]
+Critical = 75

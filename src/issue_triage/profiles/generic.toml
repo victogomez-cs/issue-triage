@@ -1,0 +1,120 @@
+# Generic label profile: recognizes the labeling conventions most GitHub projects use.
+#
+# Every entry is a regular expression matched against a whole label name (case-insensitive
+# unless case_sensitive = true). Copy any section into your own triage.toml to change it;
+# see examples/triage.toml.
+
+name = "generic"
+description = "Common GitHub conventions: bug / enhancement / question labels, priority: *, area/*"
+
+# If an issue has no kind label (and no AI result), should it be treated as a bug?
+uncategorized_is_bug = false
+# Flag triaged bugs without a priority label: true, false, or "auto" (only if the repo
+# actually uses priority labels on at least 20% of its issues; then only bug-labeled issues are checked).
+require_priority = "auto"
+case_sensitive = false
+
+# GitHub's built-in issue types, used when no label rule matches.
+[issue_types]
+Bug = "bug"
+Feature = "feature"
+Task = "internal"
+
+# Kind rules are checked in order; the first rule with a matching label wins.
+# Kinds: bug, feature, internal, docs, question, not_actionable
+[[kind_rules]]
+kind = "bug"          # strong bug signals win over everything else
+labels = ['.*\bcrash(es|ed|ing)?\b.*', '.*\bregression\b.*', '.*\bdata[- ]?loss\b.*', '.*\bsecurity\b.*vuln.*',
+          '.*\bsegfault\b.*', '.*\bhang(s)?\b.*', 'i-ice', 'i-unsound']
+
+[[kind_rules]]
+kind = "feature"
+labels = ['.*\benhancement\b.*', '.*\bfeature\b.*', '.*\bproposal\b.*', '.*\brfc\b.*', '.*\bidea\b.*',
+          '.*\bsuggestion\b.*', '(kind|type)[:/ -]*(feature|enhancement|improvement)', 'improvement',
+          '.*\bnew api\b.*', '.*feature[- _]?request.*']
+
+[[kind_rules]]
+kind = "internal"
+labels = ['.*\btech(nical)?[- ]?debt\b.*', '.*\bchore\b.*', '.*\brefactor(ing)?\b.*', '.*\bflak(e|y)\b.*',
+          'ci', '.*\binfra(structure)?\b.*', 'dependencies', '.*\bdependency\b.*', '(kind|type)[:/ -]*(task|cleanup|maintenance)',
+          'maintenance', '.*\bcleanup\b.*', 'tests?', '.*\bfailing[- ]tests?\b.*', '.*\btest[- ]failures?\b.*',
+          '.*\btracking[- ]issue\b.*']
+
+[[kind_rules]]
+kind = "docs"
+labels = ['docs?', '.*\bdocumentation\b.*', '(kind|type|area)[:/ -]*docs?', '.*\bdocs?\b[:/ -].*']
+
+[[kind_rules]]
+kind = "question"
+labels = ['.*\bquestion\b.*', '.*\bsupport\b.*', '.*\bdiscussion\b.*', '.*\bhow[- ]?to\b.*', '.*\busage\b.*']
+
+[[kind_rules]]
+kind = "not_actionable"
+labels = ['invalid', '.*\bwon\W?t[- ]?fix\b.*', '.*\bwontfix\b.*', '.*\bduplicate\b.*', '.*\bspam\b.*',
+          '.*\bnot[- ](a[- ])?bug\b.*', '.*\bworking as intended\b.*', '.*\bby design\b.*']
+
+[[kind_rules]]
+kind = "bug"          # ordinary bug labels
+labels = ['.*\bbugs?\b.*', '.*\bdefect\b.*', '(kind|type)[:/ -]*bug', '🐛.*', '.*\bperf(ormance)?\b.*',
+          '.*\bbroken\b.*', '.*\berror\b.*']
+
+# Priority labels, normalized to P0 (most urgent) .. P3 (least).
+[priority]
+P0 = ['p[-_: ]?(0|critical|urgent|blocker)', '(priority|pri|prio)[:/ -]*(0|p0|critical|urgent|blocker|highest)(-urgent)?',
+      'critical', 'urgent', 'blocker', '.*\bshowstopper\b.*', 'release[- ]blocker']
+P1 = ['p[-_: ]?(1|high)', '(priority|pri|prio)[:/ -]*(1|p1|high|important-soon)', 'high[- ]priority', 'important']
+P2 = ['p[-_: ]?(2|medium)', '(priority|pri|prio)[:/ -]*(2|p2|medium|normal|moderate|important-longterm)',
+      'medium[- ]priority']
+P3 = ['p[-_: ]?(3|4|low)', '(priority|pri|prio)[:/ -]*(3|4|p3|p4|low|lowest|minor|backlog)', 'low[- ]priority',
+      '.*\bnice[- ]to[- ]have\b.*', 'backlog']
+
+# Severity rules: the highest matching level wins. `all_of` needs every listed label.
+[[severity_rules]]
+level = "critical"
+labels = ['(severity|sev)[:/ -]*(0|1|s0|s1|critical|blocker)', '.*\bfatal\b.*', '.*\bdata[- ]?loss\b.*',
+          '.*\bsecurity\b.*', 'i-unsound']
+
+[[severity_rules]]
+level = "high"
+labels = ['(severity|sev)[:/ -]*(2|s2|high|major)', '.*\bcrash(es|ed|ing)?\b.*', '.*\bregression\b.*',
+          '.*\bsegfault\b.*', '.*\bhang(s)?\b.*', 'i-ice', 'i-crash', 'i-hang']
+
+[[severity_rules]]
+level = "medium"
+labels = ['(severity|sev)[:/ -]*(3|s3|medium|moderate|normal)', '.*\bperf(ormance)?\b.*', 'i-slow']
+
+[[severity_rules]]
+level = "low"
+labels = ['(severity|sev)[:/ -]*(4|s4|low|minor|trivial)', '.*\bcosmetic\b.*', '.*\btypo\b.*']
+
+[signals]
+# crash / regression feed the "Crash at P3" and "Regression at P3" review flags
+crash = ['.*\bcrash(es|ed|ing)?\b.*', '.*\bfatal\b.*', '.*\bsegfault\b.*', 'i-ice', 'i-crash']
+regression = ['.*\bregression\b.*']
+production = ['.*\bproduction\b.*', '.*\bprod[- ]issue\b.*', '.*\bcustomer[- ]impact\b.*']
+named_customer = ['customer[:/ -].+']
+crowd_customer = []
+reproducible = ['confirmed', '.*\breproduced\b.*', '.*\breproducible\b.*', 'has[- ]repro.*', 'verified',
+                '(status|state)[:/ -]*confirmed', '.*\bhas[- ]mcve\b.*', 'needs[- ]?fix']
+needs_info = ['.*\bneeds[- ](more[- ])?info(rmation)?\b.*', '.*\bneeds[- ]repro(duction)?\b.*',
+              '.*\bmore[- ]info[- ]needed\b.*', '.*\bcannot[- ]reproduce\b.*', ".*can'?t[- ]reproduce.*",
+              '.*\bincomplete\b.*', '.*\binfo[- ]needed\b.*', '.*\bneeds[- ]mcve\b.*']
+waiting = ['.*\bwaiting[- ]?for\b.*', '.*waiting[- ]?for[- ]?info.*', '.*\bawaiting\b.*', '.*\bneeds[- ](author|reporter|user)[- ](feedback|response|input)\b.*',
+           '.*\bpending[- ]response\b.*', '.*\bresponse[- ]needed\b.*']
+needs_triage = ['.*\bneeds[- ]triage\b.*', 'triage', '.*\buntriaged\b.*', '(status|state)[:/ -]*(new|triage|untriaged)',
+                '.*\bto[- ]triage\b.*', '.*needs[- ]?investigation.*', 'needs[- ]sig', 'i-prioritize']
+
+[triage]
+# Regex with one group that captures the area/team name from a label.
+# Matches area/x, component: x, team-x, sig/x (Kubernetes) and T-x / A-x (Rust).
+team = '(?:(?:area|component|team|module|scope|platform|pkg|package|comp|sig|wg)[:/ -]+|(?-i:[TA])-)(.+)'
+# Regex marking an issue as triaged by its team ({team} is replaced by the team name). Leave empty
+# if the repo has no such convention.
+triaged = ''
+
+[release]
+# Regex with two groups (major, minor) for "found in version" labels. Leave empty if unused.
+pattern = '(?:affects|found[- ]in|version|v)[:/ -]*v?(\d+)\.(\d+).*'
+
+[dedupe]
+skip_kinds = ["internal"]

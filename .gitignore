@@ -1,0 +1,17 @@
+# Data and reports (may contain issue text; don't commit)
+triage-output/
+*.xlsx
+*.csv
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+.pytest_cache/
+
+# Secrets
+.env
